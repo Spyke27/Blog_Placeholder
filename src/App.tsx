@@ -5,6 +5,9 @@ import { Post } from './types/Post'
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([])
+  const [display, setDisplay] = useState('hidden')
+  const [displayPosts, setDisplayPosts] = useState('grid')
+  const [showTitles, setShowTitles] = useState(true)
 
   useEffect(() => {
     loadPosts();
@@ -15,18 +18,44 @@ function App() {
     let json = await res.json();
      setPosts(json)
   }
+  const handleNewPost = () => {
+    setDisplay("flex");
+    setDisplayPosts('hidden')
+    setShowTitles(false)
+  }
 
   return (
-    <div className="App flex flex-col p-10">
-      <h1 className='text-3xl uppercase font-serif text-center mb-10'>Postagens</h1>
-      <div className='grid gap-10 grid-cols-3'>
+    <div className="App flex flex-col p-10 relative">
+
+      {showTitles &&
+         <button className='fixed bottom-5 right-5 bg-green-500 z-20 rounded p-2 text-slate-200'
+         onClick={handleNewPost}>
+           New Post
+         </button>
+      }
+     
+
+      <div className={`${display} fixed z-10 bg-stone-900 rounded inset-auto p-10`}>
+        <fieldset className='border-2 p-5'>
+          <legend className='text-slate-200'>New Post</legend>
+          <input type="text" placeholder='Digite o título' className='border-2 mb-5 p-1' />
+          <textarea className='block border-2 p-2 w-full' placeholder='Digite o corpo da mensagem...'></textarea>
+          <button className='uppercase py-1 px-2 mt-2 bg-green-500 text-slate-200 block'>postar</button>
+        </fieldset>
+      </div>
+
+      {showTitles &&
+        <h1 className='text-3xl uppercase font-serif text-center mb-10'>Postagens</h1>
+      }
+      
+      <div className={`${displayPosts} gap-10 grid-cols-3`}>
 
         {posts.map((post, index) => (
           <div key={index} className='flex flex-col bg-stone-900 rounded p-10 items-center relative'>
 
-            <h2 className='text-sm text-slate-200 uppercase mb-10'>{post.title}</h2>
+            <h2 className='text-sm text-slate-200 uppercase mb-5'>{post.title}</h2>
 
-            <h3 className='text-xs text-slate-200'>{post.body}</h3>
+            <h3 className='text-xs text-slate-200'>{post.body}{post.body}</h3>
 
             <p className='text-xs text-slate-200 absolute bottom-0 left-0 ml-5 mb-2'>#{post.id}</p>
 
